@@ -56,11 +56,11 @@ public class FilteringRequest {
             }else if(ShapeType.Rectangle.name().equalsIgnoreCase(shapeType)){
                 var bounds = new Bounds(shape.get("bounds"));
                 Coordinate[] pts = new Coordinate[5];
-                pts[0] = new Coordinate(bounds.north, bounds.east);
-                pts[1] = new Coordinate(bounds.south, bounds.east);
-                pts[2] = new Coordinate(bounds.south, bounds.west);
-                pts[3] = new Coordinate(bounds.north, bounds.west);
-                pts[4] = new Coordinate(bounds.north, bounds.east);
+                pts[0] = new Coordinate(bounds.east, bounds.north);
+                pts[1] = new Coordinate(bounds.east, bounds.south);
+                pts[2] = new Coordinate(bounds.west, bounds.south);
+                pts[3] = new Coordinate(bounds.west, bounds.north);
+                pts[4] = new Coordinate(bounds.east, bounds.north);
                 request.polygons.add(geomFact.createPolygon(pts));
             }else if(ShapeType.Polygon.name().equalsIgnoreCase(shapeType)){
                 var pts=new ArrayList<Coordinate>();
