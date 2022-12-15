@@ -10,7 +10,10 @@ class RangesFinderTest {
     Path workingDir = Path.of("", "src/test/java", "com/solace/demo/geofiltering");
 
     @ParameterizedTest
-    @CsvSource({"intersect001.json, 1"})
+    @CsvSource({
+            "intersect001.json, 1",
+            "intersect002.json, 2",
+    })
     void normalizePolygons(String jsonFile, int expectedCount) throws Exception{
         Path file = workingDir.resolve(jsonFile);
         String jsonString = Files.readString(file);

@@ -1,0 +1,54 @@
+{
+  "maxRange": 100,
+  "accuracy": 90,
+  "shapes": [
+    {
+      "type": "Rectangle",
+      "bounds": {
+        "south": -2,
+        "west": -2,
+        "north": 2,
+        "east": 2
+      }
+    },
+    {
+      "type": "Polygon",
+      "coordinates": [
+        {
+          "lat": 0,
+          "lng": 1
+        },
+        {
+          "lat": 4,
+          "lng": 1
+        },
+        {
+          "lat": 4,
+          "lng": 3
+        },
+        {
+          "lat": 0,
+          "lng": 4
+        }
+      ]
+    },
+    {
+      "type": "Rectangle",
+      "bounds": {
+        "south": -5,
+        "west": 3,
+        "north": -3,
+        "east": 5
+      }
+    },
+    {
+      "type": "Rectangle",
+      "bounds": {
+        "south": -4,
+        "west": 4,
+        "north": -1,
+        "east": 7
+      }
+    }
+  ]
+}
