@@ -5,14 +5,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.util.GeometricShapeFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FilteringRequest {
+    static final Logger logger = LoggerFactory.getLogger(FilteringRequest.class);
+
     int maxRange;
     double accuracy;
-    List<Polygon> polygons = new ArrayList<>();
+    List<Geometry> polygons = new ArrayList<>();
 
     private static ObjectMapper objectMapper = new ObjectMapper();
     public static FilteringRequest from(String jsonString) throws Exception {
@@ -35,7 +39,7 @@ public class FilteringRequest {
         }
     }
 
-    static FilteringRequest from(JsonNode root) throws Exception {
+    static FilteringRequest from(JsonNode root) {
         var request = new FilteringRequest();
         request.maxRange = root.get("maxRange").asInt();
         request.accuracy = root.get("accuracy").asDouble()/100;
@@ -69,7 +73,7 @@ public class FilteringRequest {
                 pts.add(pts.get(0));
                 request.polygons.add(geomFact.createPolygon(pts.toArray(new Coordinate[0])));
             } else{
-                throw new IllegalArgumentException(String.format("Unknown shape type: %s", shapeType));
+                logger.error("Unknown shape type: {}", shapeType);
             }
         });
 
