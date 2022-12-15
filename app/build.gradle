@@ -47,7 +47,10 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
     implementation 'info.picocli:picocli:4.7.0'
     implementation 'ch.qos.logback:logback-classic:1.4.5'
+// https://mvnrepository.com/artifact/com.solacesystems/sol-jcsmp
     implementation 'com.solacesystems:sol-jcsmp:10.16.0'
+// https://mvnrepository.com/artifact/org.locationtech.jts/jts-core
+    implementation 'org.locationtech.jts:jts-core:1.19.0'
 }
 
 application {
