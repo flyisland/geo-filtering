@@ -14,7 +14,7 @@ public class FilteringRequest {
     int accuracy;
     List<Polygon> polygons = new ArrayList<>();
 
-    public static ObjectMapper objectMapper = new ObjectMapper();
+    private static ObjectMapper objectMapper = new ObjectMapper();
     public static FilteringRequest from(String jsonString) throws Exception {
         return from(jsonString.getBytes());
     }
@@ -75,6 +75,4 @@ public class FilteringRequest {
 
         return request;
     }
-
-
 }
