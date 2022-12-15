@@ -16,9 +16,11 @@ public class FilteringRequest {
 
     private static ObjectMapper objectMapper = new ObjectMapper();
     public static FilteringRequest from(String jsonString) throws Exception {
-        return from(jsonString.getBytes());
+        return from(objectMapper.readTree(jsonString));
     }
-
+    public static FilteringRequest from(byte[] jsonData) throws Exception {
+        return from(objectMapper.readTree(jsonData));
+    }
     enum ShapeType {
         Ellipse,Rectangle,Polygon
     }
@@ -33,8 +35,7 @@ public class FilteringRequest {
         }
     }
 
-    public static FilteringRequest from(byte[] jsonData) throws Exception {
-        var root = objectMapper.readTree(jsonData);
+    static FilteringRequest from(JsonNode root) throws Exception {
         var request = new FilteringRequest();
         request.maxRange = root.get("maxRange").asInt();
         request.accuracy = root.get("accuracy").asDouble()/100;
@@ -67,7 +68,6 @@ public class FilteringRequest {
                         pts.add(new Coordinate(coord.get("lng").asDouble(), coord.get("lat").asDouble())));
                 pts.add(pts.get(0));
                 request.polygons.add(geomFact.createPolygon(pts.toArray(new Coordinate[0])));
-
             } else{
                 throw new IllegalArgumentException(String.format("Unknown shape type: %s", shapeType));
             }
