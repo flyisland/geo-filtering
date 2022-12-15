@@ -1,4 +1,4 @@
-package com.solace.demo.ichen;
+package com.solace.demo;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -16,6 +16,7 @@ public class CtrlCHelper {
         try {
             doneSignal.await();
         } catch (InterruptedException e) {
+            System.err.printf("Interrupted: %s%n", e);
         }
     }
 }

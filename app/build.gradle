@@ -15,7 +15,7 @@ plugins {
 
 version '0.0.1'
 def longVersion = version + ", Build time: "+ new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())
-def mainClassName="com.solace.demo.ichen.App"
+def mainClassName="com.solace.demo.App"
 
 repositories {
     // Use Maven Central for resolving dependencies.

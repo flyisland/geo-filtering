@@ -1,4 +1,4 @@
-package com.solace.demo.ichen;
+package com.solace.demo;
 
 import com.solacesystems.jcsmp.BytesXMLMessage;
 import com.solacesystems.jcsmp.JCSMPException;
