@@ -11,7 +11,7 @@ import org.locationtech.jts.util.GeometricShapeFactory;
 
 public class FilteringRequest {
     int maxRange;
-    int accuracy;
+    double accuracy;
     List<Polygon> polygons = new ArrayList<>();
 
     private static ObjectMapper objectMapper = new ObjectMapper();
@@ -37,7 +37,7 @@ public class FilteringRequest {
         var root = objectMapper.readTree(jsonData);
         var request = new FilteringRequest();
         request.maxRange = root.get("maxRange").asInt();
-        request.accuracy = root.get("accuracy").asInt();
+        request.accuracy = root.get("accuracy").asDouble()/100;
         var shapes = root.get("shapes");
         shapes.elements().forEachRemaining((shape) -> {
             var gsf = new GeometricShapeFactory();

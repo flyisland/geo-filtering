@@ -19,7 +19,7 @@ class FilteringRequestTest {
         try {
             var request = FilteringRequest.from(jsonString);
             assertEquals(1023, request.maxRange);
-            assertEquals(67, request.accuracy);
+            assertEquals(0.67, request.accuracy);
             assertEquals(3, request.polygons.size());
         }catch (Exception e) {
             e.printStackTrace();
