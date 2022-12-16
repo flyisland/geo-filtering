@@ -19,7 +19,7 @@ class RangesFinderTest {
         String jsonString = Files.readString(file);
         var request = FilteringRequest.from(jsonString);
 
-        var result = RangesFinder.normalizePolygons(request.polygons);
+        var result = Helper.normalizePolygons(request.polygons);
         System.out.println(result);
         assertEquals(expectedCount, result.size());
     }
