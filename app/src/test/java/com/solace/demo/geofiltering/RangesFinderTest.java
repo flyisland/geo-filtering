@@ -13,6 +13,7 @@ class RangesFinderTest {
     @CsvSource({
             "intersect001.json, 1",
             "intersect002.json, 2",
+            "intersect003.json, 2",
     })
     void normalizePolygons(String jsonFile, int expectedCount) throws Exception{
         Path file = workingDir.resolve(jsonFile);

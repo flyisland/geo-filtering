@@ -1,0 +1,27 @@
+{
+  "maxRange": 100,
+  "accuracy": 90,
+  "shapes": [
+    {
+      "type": "Polygon",
+      "coordinates": [
+        {"lng": 1, "lat": 0},
+        {"lng": 1, "lat": 3},
+        {"lng": 2, "lat": 3},
+        {"lng": 2, "lat": 2},
+        {"lng": 0, "lat": 1.5},
+        {"lng": 2, "lat": 1},
+        {"lng": 2, "lat": 0}
+      ]
+    },
+    {
+      "type": "Polygon",
+      "coordinates": [
+        {"lng": 2, "lat": 0},
+        {"lng": 2, "lat": 3},
+        {"lng": 3, "lat": 3},
+        {"lng": 3, "lat": 0}
+      ]
+    }
+  ]
+}
