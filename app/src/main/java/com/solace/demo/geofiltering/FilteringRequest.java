@@ -18,7 +18,7 @@ public class FilteringRequest {
     double accuracy;
     List<Geometry> polygons = new ArrayList<>();
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
     public static FilteringRequest from(String jsonString) throws Exception {
         return from(objectMapper.readTree(jsonString));
     }
