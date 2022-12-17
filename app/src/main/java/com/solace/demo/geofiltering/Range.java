@@ -79,7 +79,7 @@ public class Range implements Comparable<Range>, Cloneable {
             var intersection = rangeRectangle.intersection(polygon);
             if (!intersection.isEmpty() && intersection.getArea() > 0) {
                 intersectionArea += intersection.getArea();
-                intersectingPolygons.add(polygon);
+                intersectingPolygons.add(intersection);
             }
         }
         var rectangleArea = getRectangleArea();

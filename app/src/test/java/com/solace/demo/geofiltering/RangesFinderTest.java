@@ -12,6 +12,7 @@ class RangesFinderTest {
     @ParameterizedTest
     @CsvSource({
             "filtering01.json, filtering01.result.txt",
+            "filtering02.json, filtering02.result.txt",
     })
     void find(String jsonFile, String expectedFile) throws Exception {
         String jsonString = Files.readString(workingDir.resolve(jsonFile));
