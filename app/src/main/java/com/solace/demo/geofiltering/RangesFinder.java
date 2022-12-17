@@ -14,9 +14,8 @@ public class RangesFinder {
             var splitSuccess = false;
             int i = 0;
             for (Range range : ranges) {
-                i++;
                 if (range.blankRatio == 0) {
-                    break; // no need to continue
+                    break; // no need to continue, since it's perfect match
                 }
                 range.split();
                 // maxRange is still met after splitting this range
@@ -25,9 +24,12 @@ public class RangesFinder {
                     ranges.remove(i);
                     ranges.addAll(range.children);
                     accuracy = calculateAccuracy(ranges, request.polygons);
+                    break;
                 }
+                i++;
             }
             if (!splitSuccess) {
+                // because the maxRangeCount limit
                 break;
             }
         } while (accuracy < request.minAccuracy);
