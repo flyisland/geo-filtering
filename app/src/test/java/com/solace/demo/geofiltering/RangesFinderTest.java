@@ -1,27 +1,23 @@
 package com.solace.demo.geofiltering;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.api.Test;
 
 class RangesFinderTest {
     Path workingDir = Path.of("", "src/test/java", "com/solace/demo/geofiltering");
 
-    @ParameterizedTest
-    @CsvSource({
-            "intersect001.json, 1",
-            "intersect002.json, 2",
-            "intersect003.json, 2",
-    })
-    void normalizePolygons(String jsonFile, int expectedCount) throws Exception{
-        Path file = workingDir.resolve(jsonFile);
+    @Test
+    void find() throws Exception {
+        Path file = workingDir.resolve("intersect001.json");
         String jsonString = Files.readString(file);
-        var request = FilteringRequest.from(jsonString);
+        try {
+            var request = FilteringRequest.from(jsonString);
+            var result = RangesFinder.find(request);
+            System.out.println(result.ranges);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        var result = Helper.normalizePolygons(request.polygons);
-        System.out.println(result);
-        assertEquals(expectedCount, result.size());
     }
 }

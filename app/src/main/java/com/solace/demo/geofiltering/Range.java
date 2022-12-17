@@ -17,6 +17,18 @@ public class Range implements Comparable<Range>, Cloneable {
         X, Y
     }
 
+    public HashMap<DIMS, Integer> getSign() {
+        return sign;
+    }
+
+    public HashMap<DIMS, Double> getCoord() {
+        return coord;
+    }
+
+    public HashMap<DIMS, Double> getUnit() {
+        return unit;
+    }
+
     HashMap<DIMS, Integer> sign;
     HashMap<DIMS, Double> coord;
     HashMap<DIMS, Double> unit;

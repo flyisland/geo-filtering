@@ -32,7 +32,7 @@ public class RangesFinder {
             }
         } while (accuracy < request.minAccuracy);
 
-        return null;
+        return new FilteringResult(accuracy, ranges);
     }
 
     private static double calculateAccuracy(List<Range> ranges, List<Geometry> targetPolygons) {
