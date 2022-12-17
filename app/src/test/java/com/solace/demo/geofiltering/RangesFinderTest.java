@@ -20,6 +20,7 @@ class RangesFinderTest {
         try {
             var request = FilteringRequest.from(jsonString);
             var result = RangesFinder.find(request);
+            System.out.println(result.toPrettyJsonString());
             assertEquals(expected, result.toJsonString());
         }catch (Exception e) {
             e.printStackTrace();
