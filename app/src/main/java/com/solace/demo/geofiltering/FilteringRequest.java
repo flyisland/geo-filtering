@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 public class FilteringRequest {
     static final Logger logger = LoggerFactory.getLogger(FilteringRequest.class);
 
-    int maxRange;
+    int maxRangeCount;
     double minAccuracy;
     List<Geometry> polygons = new ArrayList<>();
 
@@ -41,7 +41,7 @@ public class FilteringRequest {
 
     static FilteringRequest from(JsonNode root) {
         var request = new FilteringRequest();
-        request.maxRange = root.get("maxRange").asInt();
+        request.maxRangeCount = root.get("maxRangeCount").asInt();
         request.minAccuracy = root.get("minAccuracy").asDouble()/100;
         var shapes = root.get("shapes");
         shapes.elements().forEachRemaining((shape) -> {
@@ -82,7 +82,7 @@ public class FilteringRequest {
 
     public String toString() {
         var result = new StringBuilder();
-        result.append(String.format("maxRange = %d%n",this.maxRange));
+        result.append(String.format("maxRangeCount = %d%n",this.maxRangeCount));
         result.append(String.format("minAccuracy = %f%n",this.minAccuracy));
         if (polygons.size() == 0) {
             result.append("polygons = []\n");

@@ -20,7 +20,7 @@ public class RangesFinder {
                 }
                 range.split();
                 // maxRange is still met after splitting this range
-                if (ranges.size() - 1 + range.children.size() <= request.maxRange) {
+                if (ranges.size() - 1 + range.children.size() <= request.maxRangeCount) {
                     splitSuccess = true;
                     ranges.remove(i);
                     ranges.addAll(range.children);

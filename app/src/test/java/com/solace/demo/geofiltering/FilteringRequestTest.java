@@ -13,7 +13,7 @@ class FilteringRequestTest {
         String jsonString = Files.readString(file);
         try {
             var request = FilteringRequest.from(jsonString);
-            assertEquals(1023, request.maxRange);
+            assertEquals(1023, request.maxRangeCount);
             assertEquals(0.67, request.minAccuracy);
             assertEquals(3, request.polygons.size());
         }catch (Exception e) {

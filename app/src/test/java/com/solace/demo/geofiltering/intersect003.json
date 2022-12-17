@@ -1,5 +1,5 @@
 {
-  "maxRange": 100,
+  "maxRangeCount": 100,
   "minAccuracy": 90,
   "shapes": [
     {
