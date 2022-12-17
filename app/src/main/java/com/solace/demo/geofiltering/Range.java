@@ -135,10 +135,10 @@ public class Range implements Comparable<Range>, Cloneable {
 
     private Geometry builtRangeRectangle() {
         Coordinate[] pts = new Coordinate[5];
-        pts[0] = new Coordinate(sign.get(DIMS.X) *coord.get(DIMS.Y) , sign.get(DIMS.Y) *coord.get(DIMS.Y) );
-        pts[1] = new Coordinate(sign.get(DIMS.X) *coord.get(DIMS.Y) , sign.get(DIMS.Y) *(coord.get(DIMS.Y)  + unit.get(DIMS.Y)));
-        pts[2] = new Coordinate(sign.get(DIMS.X) *(coord.get(DIMS.Y)  + unit.get(DIMS.X)), sign.get(DIMS.Y) *(coord.get(DIMS.Y)  + unit.get(DIMS.Y)));
-        pts[3] = new Coordinate(sign.get(DIMS.X) *(coord.get(DIMS.Y)  + unit.get(DIMS.X)), sign.get(DIMS.Y) *coord.get(DIMS.Y) );
+        pts[0] = new Coordinate(sign.get(DIMS.X) *coord.get(DIMS.X) , sign.get(DIMS.Y) *coord.get(DIMS.Y) );
+        pts[1] = new Coordinate(sign.get(DIMS.X) *coord.get(DIMS.X) , sign.get(DIMS.Y) *(coord.get(DIMS.Y)  + unit.get(DIMS.Y)));
+        pts[2] = new Coordinate(sign.get(DIMS.X) *(coord.get(DIMS.X)  + unit.get(DIMS.X)), sign.get(DIMS.Y) *(coord.get(DIMS.Y)  + unit.get(DIMS.Y)));
+        pts[3] = new Coordinate(sign.get(DIMS.X) *(coord.get(DIMS.X)  + unit.get(DIMS.X)), sign.get(DIMS.Y) *coord.get(DIMS.Y) );
         pts[4] = new Coordinate(pts[0]);
         return geomFact.createPolygon(pts);
     }
