@@ -94,14 +94,14 @@ public class Range implements Comparable<Range>, Cloneable {
         }
         children = new ArrayList<>();
         var env = getIntersectionsEnvelope();
-        var xRatio = (env.getMinX() - env.getMinX()) / unit.get(DIMS.X);
-        var yRatio = (env.getMaxY() - env.getMaxY()) / unit.get(DIMS.Y);
+        var xRatio = (env.getMaxX() - env.getMinX()) / unit.get(DIMS.X);
+        var yRatio = (env.getMaxY() - env.getMinY()) / unit.get(DIMS.Y);
         DIMS dim = xRatio < yRatio ? DIMS.X : DIMS.Y;
         for (var i = 0; i < 10; i++) {
             try {
                 var child = (Range) this.clone();
-                child.unit.put(DIMS.X, unit.get(DIMS.X) / 10);
-                child.coord.put(DIMS.X, this.coord.get(DIMS.X) + child.unit.get(DIMS.X) * i);
+                child.unit.put(dim, unit.get(dim) / 10);
+                child.coord.put(dim, this.coord.get(dim) + child.unit.get(dim) * i);
                 child.polygonsToCover = this.intersectingPolygons;
                 child.intersectingPolygons = null;
                 child.calculate();
