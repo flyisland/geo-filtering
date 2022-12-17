@@ -24,8 +24,15 @@ public class FilteringResult {
 
     public String toJsonString() {
         try {
-            var json = objectMapper.writeValueAsString(this);
-            return json;
+            return objectMapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public String toPrettyJsonString() {
+        try {
+            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return null;
