@@ -1,0 +1,15 @@
+{
+  "maxRangeCount": 100,
+  "minAccuracy": 90,
+  "shapes": [
+    {
+      "type": "Rectangle",
+      "bounds": {
+        "south": 0,
+        "west": 0,
+        "north": 1,
+        "east": 1
+      }
+    }
+  ]
+}
