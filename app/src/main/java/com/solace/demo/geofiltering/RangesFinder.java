@@ -36,7 +36,7 @@ public class RangesFinder {
     }
 
     private static double calculateAccuracy(List<Range> ranges, List<Geometry> targetPolygons) {
-        var rangesArea =ranges.stream().mapToDouble(range -> range.xUnit * range.yUnit).sum();
+        var rangesArea =ranges.stream().mapToDouble(Range::getRectangleArea).sum();
         var targetArea = targetPolygons.stream().mapToDouble(Geometry::getArea).sum();
         return targetArea / rangesArea;
     }

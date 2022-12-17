@@ -1,6 +1,7 @@
 package com.solace.demo.geofiltering;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
@@ -12,21 +13,29 @@ public class Range implements Comparable<Range>, Cloneable {
     static final int NEGATIVE = -1;
     static GeometryFactory geomFact = new GeometryFactory();
 
-    int xSign, ySign;
-    double x, y, xUnit, yUnit;
+    enum DIMS {
+        X, Y
+    }
+
+    HashMap<DIMS, Integer> sign;
+    HashMap<DIMS, Double> coord;
+    HashMap<DIMS, Double> unit;
     double blankArea;
     double blankRatio;
     List<Geometry> polygonsToCover;
     List<Geometry> intersectingPolygons;
     List<Range> children;
 
-    private Range(int xSign, int ySign, double x, List<Geometry> polygonsToCover) {
-        this.xSign = xSign;
-        this.ySign = ySign;
-        this.x = x;
-        this.y = 0;
-        this.xUnit = 100;
-        this.yUnit = 100;
+    private Range(int xSign, int ySign, double xCoord, List<Geometry> polygonsToCover) {
+        sign = new HashMap<>();
+        coord = new HashMap<>();
+        unit = new HashMap<>();
+        sign.put(DIMS.X, xSign);
+        sign.put(DIMS.Y, ySign);
+        coord.put(DIMS.X, xCoord);
+        coord.put(DIMS.Y, 0.0);
+        unit.put(DIMS.X, 100.0);
+        unit.put(DIMS.Y, 100.0);
         this.polygonsToCover = polygonsToCover;
     }
 
@@ -34,8 +43,8 @@ public class Range implements Comparable<Range>, Cloneable {
         List<Range> result = new ArrayList<>();
         for (var xSign : List.of(POSITIVE, NEGATIVE)) {
             for (var ySign : List.of(POSITIVE, NEGATIVE)) {
-                for (var x : List.of(0, 1)) {
-                    var range = new Range(xSign, ySign, x, polygonsToCover);
+                for (var xCoord : List.of(0, 1)) {
+                    var range = new Range(xSign, ySign, xCoord, polygonsToCover);
                     range.calculate();
                     if (range.blankRatio < 1) {
                         result.add(range);
@@ -57,7 +66,7 @@ public class Range implements Comparable<Range>, Cloneable {
                 intersectingPolygons.add(polygon);
             }
         }
-        var rectangleArea = xUnit * yUnit;
+        var rectangleArea = getRectangleArea();
         blankArea = rectangleArea - intersectionArea;
         blankRatio = blankArea / rectangleArea;
     }
@@ -65,30 +74,29 @@ public class Range implements Comparable<Range>, Cloneable {
     void split() {
         children = new ArrayList<>();
         var env = getIntersectionsEnvelope();
-        var xRatio = (env.getMinX() - env.getMinX()) / xUnit;
-        var yRatio = (env.getMaxY() - env.getMaxY()) / yUnit;
-        try {
-            for (var i = 0; i < 10; i++) {
+        var xRatio = (env.getMinX() - env.getMinX()) / unit.get(DIMS.X);
+        var yRatio = (env.getMaxY() - env.getMaxY()) / unit.get(DIMS.Y);
+        DIMS dim = xRatio < yRatio ? DIMS.X : DIMS.Y;
+        for (var i = 0; i < 10; i++) {
+            try {
                 var child = (Range) this.clone();
-                if (xRatio < yRatio) {
-                    child.xUnit = xUnit / 10;
-                    child.x = this.x + child.xUnit * i;
-                } else {
-                    child.yUnit = yUnit / 10;
-                    child.y = this.y + child.yUnit * i;
-                }
+                child.unit.put(DIMS.X, unit.get(DIMS.X) / 10);
+                child.coord.put(DIMS.X, this.coord.get(DIMS.X) + child.unit.get(DIMS.X) * i);
                 child.polygonsToCover = this.intersectingPolygons;
                 child.intersectingPolygons = null;
                 child.calculate();
                 if (child.blankRatio < 1) {
                     children.add(child);
                 }
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
             }
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
         }
     }
 
+    Double getRectangleArea() {
+        return unit.get(DIMS.X) * unit.get(DIMS.Y);
+    }
 
     private Envelope getIntersectionsEnvelope() {
         double minX = Double.MAX_VALUE;
@@ -107,10 +115,10 @@ public class Range implements Comparable<Range>, Cloneable {
 
     private Geometry builtRangeRectangle() {
         Coordinate[] pts = new Coordinate[5];
-        pts[0] = new Coordinate(xSign * x, ySign * y);
-        pts[1] = new Coordinate(xSign * x, ySign * (y + yUnit));
-        pts[2] = new Coordinate(xSign * (x + xUnit), ySign * (y + yUnit));
-        pts[3] = new Coordinate(xSign * (x + xUnit), ySign * y);
+        pts[0] = new Coordinate(sign.get(DIMS.X) *coord.get(DIMS.Y) , sign.get(DIMS.Y) *coord.get(DIMS.Y) );
+        pts[1] = new Coordinate(sign.get(DIMS.X) *coord.get(DIMS.Y) , sign.get(DIMS.Y) *(coord.get(DIMS.Y)  + unit.get(DIMS.Y)));
+        pts[2] = new Coordinate(sign.get(DIMS.X) *(coord.get(DIMS.Y)  + unit.get(DIMS.X)), sign.get(DIMS.Y) *(coord.get(DIMS.Y)  + unit.get(DIMS.Y)));
+        pts[3] = new Coordinate(sign.get(DIMS.X) *(coord.get(DIMS.Y)  + unit.get(DIMS.X)), sign.get(DIMS.Y) *coord.get(DIMS.Y) );
         pts[4] = new Coordinate(pts[0]);
         return geomFact.createPolygon(pts);
     }
@@ -127,6 +135,10 @@ public class Range implements Comparable<Range>, Cloneable {
 
     @Override
     protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
+        Range r = (Range)super.clone();
+        r.sign = new HashMap<>(this.sign);
+        r.coord = new HashMap<>(this.coord);
+        r.unit = new HashMap<>(this.unit);
+        return r;
     }
 }
