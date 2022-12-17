@@ -1,6 +1,6 @@
 {
   "maxRange": 1023,
-  "accuracy": 67,
+  "minAccuracy": 67,
   "shapes": [
     {
       "type": "Ellipse",

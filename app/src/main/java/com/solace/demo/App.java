@@ -20,14 +20,15 @@ public class App implements Callable<Integer>
 {
     final Logger logger = LoggerFactory.getLogger(App.class);
 
-    @Option(names = {"-h", "--host"}, description = "ip[:port]  IP and port of the event broker. (e.g. -h=192.168.160.101)")
-    private final String host="localhost:44444";
+    @Option(names = {"-h",
+            "--host"}, description = "ip[:port]  IP and port of the event broker. (e.g. -h=192.168.160.101)")
+    private String host = "localhost:44444";
 
     @Option(names = {"-u", "--username"}, description = "user[@vpn]  Client username and optionally VPN name.")
-    private final String userName ="default@default";
+    private String userName = "default@default";
 
     @Option(names = {"-p", "--password"}, description = "Client password")
-    private final String password="default";
+    private String password = "default";
 
     private JCSMPSession session;
     private XMLMessageConsumer consumer;

@@ -30,7 +30,7 @@ public class RangesFinder {
             if (!splitSuccess) {
                 break;
             }
-        } while (accuracy < request.accuracy);
+        } while (accuracy < request.minAccuracy);
 
         return null;
     }

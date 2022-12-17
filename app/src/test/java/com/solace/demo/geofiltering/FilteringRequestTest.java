@@ -1,6 +1,6 @@
 package com.solace.demo.geofiltering;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ class FilteringRequestTest {
         try {
             var request = FilteringRequest.from(jsonString);
             assertEquals(1023, request.maxRange);
-            assertEquals(0.67, request.accuracy);
+            assertEquals(0.67, request.minAccuracy);
             assertEquals(3, request.polygons.size());
         }catch (Exception e) {
             e.printStackTrace();

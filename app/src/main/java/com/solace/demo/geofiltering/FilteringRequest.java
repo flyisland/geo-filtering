@@ -15,7 +15,7 @@ public class FilteringRequest {
     static final Logger logger = LoggerFactory.getLogger(FilteringRequest.class);
 
     int maxRange;
-    double accuracy;
+    double minAccuracy;
     List<Geometry> polygons = new ArrayList<>();
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -42,7 +42,7 @@ public class FilteringRequest {
     static FilteringRequest from(JsonNode root) {
         var request = new FilteringRequest();
         request.maxRange = root.get("maxRange").asInt();
-        request.accuracy = root.get("accuracy").asDouble()/100;
+        request.minAccuracy = root.get("minAccuracy").asDouble()/100;
         var shapes = root.get("shapes");
         shapes.elements().forEachRemaining((shape) -> {
             var gsf = new GeometricShapeFactory();
@@ -78,5 +78,19 @@ public class FilteringRequest {
         });
 
         return request;
+    }
+
+    public String toString() {
+        var result = new StringBuilder();
+        result.append(String.format("maxRange = %d%n",this.maxRange));
+        result.append(String.format("minAccuracy = %f%n",this.minAccuracy));
+        if (polygons.size() == 0) {
+            result.append("polygons = []\n");
+        } else {
+            result.append("polygons = [\n");
+            polygons.forEach(p->result.append(String.format("\t%s%n",p)));
+            result.append("]");
+        }
+        return result.toString();
     }
 }
