@@ -3,11 +3,18 @@
  */
 package com.solace.demo;
 
+import com.solace.demo.geofiltering.FilteringRequest;
+import com.solace.demo.geofiltering.RangesFinder;
+import com.solacesystems.jcsmp.BytesXMLMessage;
+import com.solacesystems.jcsmp.JCSMPException;
 import com.solacesystems.jcsmp.JCSMPFactory;
 import com.solacesystems.jcsmp.JCSMPProperties;
 import com.solacesystems.jcsmp.JCSMPSession;
+import com.solacesystems.jcsmp.JCSMPStreamingPublishCorrelatingEventHandler;
+import com.solacesystems.jcsmp.TextMessage;
 import com.solacesystems.jcsmp.Topic;
 import com.solacesystems.jcsmp.XMLMessageConsumer;
+import com.solacesystems.jcsmp.XMLMessageProducer;
 import java.util.concurrent.Callable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +39,7 @@ public class App implements Callable<Integer>
 
     private JCSMPSession session;
     private XMLMessageConsumer consumer;
-
+    private XMLMessageProducer producer;
     // switch off the jcsmp output
     // (https://stackoverflow.com/questions/35313868/solace-how-to-switch-off-the-info-statements-sent-to-std-err-from-solace-java-a)
     static {
@@ -71,10 +78,46 @@ public class App implements Callable<Integer>
 
         logger.info("Start to connect to host {}, with user {}", host, userName);
         session.connect();
-        consumer = session.getMessageConsumer(new MessageListener());
+        // Simple anonymous inner-class for handling publishing events
+        producer = session.getMessageProducer(new JCSMPStreamingPublishCorrelatingEventHandler() {
+            // unused in Direct Messaging application, only for Guaranteed/Persistent publishing application
+            @Override
+            public void responseReceivedEx(Object key) {
+            }
+
+            // can be called for ACL violations, connection loss, and Persistent NACKs
+            @Override
+            public void handleErrorEx(Object key, JCSMPException cause, long timestamp) {
+                logger.error("Producer handleErrorEx() callback: {}", cause.toString());
+            }
+        });
+        consumer = session.getMessageConsumer(new MessageListener(this));
         final Topic topic = JCSMPFactory.onlyInstance().createTopic("geo/filtering");
         session.addSubscription(topic);
         consumer.start();
         logger.info("Connected. Awaiting message...");
+    }
+
+    void onMessageReceived(BytesXMLMessage requestMsg) {
+        if (requestMsg.hasAttachment()) {
+            try {
+                var request = FilteringRequest.from(requestMsg.getAttachmentByteBuffer().array());
+                var result = RangesFinder.find(request);
+                TextMessage replyMsg = JCSMPFactory.onlyInstance().createMessage(TextMessage.class);
+                replyMsg.setText(result.toJsonString());
+                try {
+                    producer.sendReply(requestMsg, replyMsg);
+                } catch (JCSMPException e) {
+                    logger.error("Error sending reply.");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            logger.info("Received Message: type->{}, AttachmentContentLength->{}, ContentLength()->{}",
+                    requestMsg.getClass().getCanonicalName(),
+                    requestMsg.getAttachmentContentLength(),
+                    requestMsg.getContentLength());
+        }
     }
 }
