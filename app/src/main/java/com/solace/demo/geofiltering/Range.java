@@ -104,6 +104,7 @@ public class Range implements Comparable<Range>, Cloneable {
                 child.coord.put(dim, this.coord.get(dim) + child.unit.get(dim) * i);
                 child.polygonsToCover = this.intersectingPolygons;
                 child.intersectingPolygons = null;
+                child.children = null;
                 child.calculate();
                 if (child.blankRatio < 1) {
                     children.add(child);
