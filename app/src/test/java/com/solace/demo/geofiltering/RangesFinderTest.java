@@ -9,7 +9,7 @@ class RangesFinderTest {
 
     @Test
     void find() throws Exception {
-        Path file = workingDir.resolve("intersect001.json");
+        Path file = workingDir.resolve("filtering01.json");
         String jsonString = Files.readString(file);
         try {
             var request = FilteringRequest.from(jsonString);
