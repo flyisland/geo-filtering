@@ -38,25 +38,26 @@ public class Range implements Comparable<Range>, Cloneable {
     List<Geometry> intersectingPolygons;
     List<Range> children;
 
-    private Range(int xSign, int ySign, double xCoord, List<Geometry> polygonsToCover) {
+    private Range(int xSign, int ySign, double xCoord, double yCoord, double bothUnit, List<Geometry> polygonsToCover) {
         sign = new HashMap<>();
         coord = new HashMap<>();
         unit = new HashMap<>();
         sign.put(DIMS.X, xSign);
         sign.put(DIMS.Y, ySign);
         coord.put(DIMS.X, xCoord);
-        coord.put(DIMS.Y, 0.0);
-        unit.put(DIMS.X, 100.0);
-        unit.put(DIMS.Y, 100.0);
+        coord.put(DIMS.Y, yCoord);
+        unit.put(DIMS.X, bothUnit);
+        unit.put(DIMS.Y, bothUnit);
         this.polygonsToCover = polygonsToCover;
     }
 
     public static List<Range> genesis(List<Geometry> polygonsToCover) {
         List<Range> result = new ArrayList<>();
+        double unit=100;
         for (var xSign : List.of(POSITIVE, NEGATIVE)) {
             for (var ySign : List.of(POSITIVE, NEGATIVE)) {
                 for (var xCoord : List.of(0, 1)) {
-                    var range = new Range(xSign, ySign, xCoord, polygonsToCover);
+                    var range = new Range(xSign, ySign, xCoord*unit, 0, unit, polygonsToCover);
                     range.calculate();
                     if (range.blankRatio < 1) {
                         result.add(range);
@@ -122,8 +123,8 @@ public class Range implements Comparable<Range>, Cloneable {
     private Envelope getIntersectionsEnvelope() {
         double minX = Double.MAX_VALUE;
         double minY = Double.MAX_VALUE;
-        double maxX = Double.MIN_VALUE;
-        double maxY = Double.MIN_VALUE;
+        double maxX = -Double.MAX_VALUE;
+        double maxY = -Double.MAX_VALUE;
         for (Geometry polygon : intersectingPolygons) {
             var env = polygon.getEnvelopeInternal();
             minX = Math.min(env.getMinX(), minX);
