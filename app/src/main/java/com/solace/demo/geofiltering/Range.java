@@ -56,6 +56,10 @@ public class Range implements Comparable<Range>, Cloneable {
     }
 
     void calculate() {
+        if (this.intersectingPolygons != null) {
+            // no need to calculate again
+            return;
+        }
         this.intersectingPolygons = new ArrayList<>();
         var rangeRectangle = builtRangeRectangle();
         double intersectionArea = 0;
@@ -72,6 +76,10 @@ public class Range implements Comparable<Range>, Cloneable {
     }
 
     void split() {
+        if (children != null) {
+            // no need to split again
+            return;
+        }
         children = new ArrayList<>();
         var env = getIntersectionsEnvelope();
         var xRatio = (env.getMinX() - env.getMinX()) / unit.get(DIMS.X);
