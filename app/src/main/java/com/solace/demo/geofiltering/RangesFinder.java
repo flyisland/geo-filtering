@@ -7,6 +7,7 @@ import org.locationtech.jts.geom.Geometry;
 public class RangesFinder {
 
     public static FilteringResult find(FilteringRequest request) {
+        request.polygons = Helper.normalizePolygons(request.polygons);
         List<Range> ranges = Range.genesis(request.polygons);
         double accuracy = 0;
         do {
