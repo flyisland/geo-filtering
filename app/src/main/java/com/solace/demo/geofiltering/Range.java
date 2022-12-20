@@ -121,10 +121,10 @@ public class Range implements Comparable<Range>, Cloneable {
     }
 
     private Envelope getIntersectionsEnvelope() {
-        double minX = Double.MAX_VALUE;
-        double minY = Double.MAX_VALUE;
-        double maxX = -Double.MAX_VALUE;
-        double maxY = -Double.MAX_VALUE;
+        double minX = Double.POSITIVE_INFINITY;
+        double minY = Double.POSITIVE_INFINITY;
+        double maxX = Double.NEGATIVE_INFINITY;
+        double maxY = Double.NEGATIVE_INFINITY;
         for (Geometry polygon : intersectingPolygons) {
             var env = polygon.getEnvelopeInternal();
             minX = Math.min(env.getMinX(), minX);
@@ -137,10 +137,14 @@ public class Range implements Comparable<Range>, Cloneable {
 
     private Geometry builtRangeRectangle() {
         Coordinate[] pts = new Coordinate[5];
-        pts[0] = new Coordinate(sign.get(DIMS.X) *coord.get(DIMS.X) , sign.get(DIMS.Y) *coord.get(DIMS.Y) );
-        pts[1] = new Coordinate(sign.get(DIMS.X) *coord.get(DIMS.X) , sign.get(DIMS.Y) *(coord.get(DIMS.Y)  + unit.get(DIMS.Y)));
-        pts[2] = new Coordinate(sign.get(DIMS.X) *(coord.get(DIMS.X)  + unit.get(DIMS.X)), sign.get(DIMS.Y) *(coord.get(DIMS.Y)  + unit.get(DIMS.Y)));
-        pts[3] = new Coordinate(sign.get(DIMS.X) *(coord.get(DIMS.X)  + unit.get(DIMS.X)), sign.get(DIMS.Y) *coord.get(DIMS.Y) );
+        final double x1 = sign.get(DIMS.X) * coord.get(DIMS.X);
+        final double y1 = sign.get(DIMS.Y) * coord.get(DIMS.Y);
+        final double x2 = sign.get(DIMS.X) * (coord.get(DIMS.X) + unit.get(DIMS.X));
+        final double y2 = sign.get(DIMS.Y) * (coord.get(DIMS.Y) + unit.get(DIMS.Y));
+        pts[0] = new Coordinate(x1, y1);
+        pts[1] = new Coordinate(x1, y2);
+        pts[2] = new Coordinate(x2, y2);
+        pts[3] = new Coordinate(x2, y1);
         pts[4] = new Coordinate(pts[0]);
         return geomFact.createPolygon(pts);
     }
