@@ -2,8 +2,9 @@ package com.solace.demo.geofiltering;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -21,26 +22,26 @@ public class Range implements Comparable<Range>, Cloneable {
         X, Y
     }
 
-    public HashMap<DIMS, BigDecimal> getSign() {
+    public Map<DIMS, BigDecimal> getSign() {
         return sign;
     }
 
-    public HashMap<DIMS, BigDecimal> getCoord() {
+    public Map<DIMS, BigDecimal> getCoord() {
         return coord;
     }
 
-    public HashMap<DIMS, BigDecimal> getUnit() {
+    public Map<DIMS, BigDecimal> getUnit() {
         return unit;
     }
 
-    public HashMap<DIMS, String> getFiltering() {
+    public Map<DIMS, String> getFiltering() {
         return filtering;
     }
 
-    HashMap<DIMS, BigDecimal> sign;
-    HashMap<DIMS, BigDecimal> coord;
-    HashMap<DIMS, BigDecimal> unit;
-    HashMap<DIMS, String> filtering;
+    Map<DIMS, BigDecimal> sign;
+    Map<DIMS, BigDecimal> coord;
+    Map<DIMS, BigDecimal> unit;
+    Map<DIMS, String> filtering;
     double blankArea;
     double blankRatio;
     List<Geometry> polygonsToCover;
@@ -48,9 +49,9 @@ public class Range implements Comparable<Range>, Cloneable {
     List<Range> children;
 
     private Range(int xSign, int ySign, double xCoord, double yCoord, double bothUnit, List<Geometry> polygonsToCover) {
-        sign = new HashMap<>();
-        coord = new HashMap<>();
-        unit = new HashMap<>();
+        sign = new LinkedHashMap<>();
+        coord = new LinkedHashMap<>();
+        unit = new LinkedHashMap<>();
         sign.put(DIMS.X, new BigDecimal(xSign));
         sign.put(DIMS.Y, new BigDecimal(ySign));
         coord.put(DIMS.X, new BigDecimal(xCoord));
@@ -175,9 +176,9 @@ public class Range implements Comparable<Range>, Cloneable {
     @Override
     protected Object clone() throws CloneNotSupportedException {
         Range r = (Range)super.clone();
-        r.sign = new HashMap<>(this.sign);
-        r.coord = new HashMap<>(this.coord);
-        r.unit = new HashMap<>(this.unit);
+        r.sign = new LinkedHashMap<>(this.sign);
+        r.coord = new LinkedHashMap<>(this.coord);
+        r.unit = new LinkedHashMap<>(this.unit);
         return r;
     }
 }

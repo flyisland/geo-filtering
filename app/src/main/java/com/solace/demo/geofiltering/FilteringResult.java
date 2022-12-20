@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class FilteringResult {
@@ -38,7 +39,7 @@ public class FilteringResult {
     private void builtFiltering() {
         var scale = Range.smallestUnit.scale();
         for (var range : ranges) {
-            range.filtering = new HashMap<>();
+            range.filtering = new LinkedHashMap<>();
             for (var dim : Range.DIMS.values()) {
                 var number = df.get(dim).format(range.sign.get(dim).multiply(range.coord.get(dim)));
                 var endCut = (int) Math.round(Math.log10(range.unit.get(dim).doubleValue()));

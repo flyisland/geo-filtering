@@ -1,23 +1,24 @@
 {
   "maxRangeCount": 300,
   "minAccuracy": 95,
+  "singleLevelWildCard": "*",
   "shapes": [
     {
-      "type": "Rectangle",
+      "type": "Ellipse",
       "bounds": {
-        "south": 1,
-        "west": 1,
-        "north": 2,
-        "east": 2
+        "south": -23.360978472614537,
+        "west": 119.67141037733309,
+        "north": -23.355880294027724,
+        "east": 119.67696369148474
       }
     },
     {
       "type": "Rectangle",
       "bounds": {
-        "south": 0,
-        "west": 0,
-        "north": 3,
-        "east": 3
+        "south": -23.36782550006954,
+        "west": 119.67165502909886,
+        "north": -23.363531340622917,
+        "east": 119.67734131221043
       }
     }
   ]
