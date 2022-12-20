@@ -36,13 +36,14 @@ public class FilteringResult {
     }
 
     private void builtFiltering() {
+        var scale = Range.smallestUnit.scale();
         for (var range : ranges) {
             range.filtering = new HashMap<>();
             for (var dim : Range.DIMS.values()) {
                 var number = df.get(dim).format(range.sign.get(dim).multiply(range.coord.get(dim)));
                 var endCut = (int) Math.round(Math.log10(range.unit.get(dim).doubleValue()));
-                endCut = endCut > 0 ? endCut + 6 : endCut + 5;
-                range.filtering.put(dim, number.substring(0, number.length() - endCut)+request.singleLevelWildCard);
+                endCut = endCut > 0 ? endCut + scale + 1 : endCut + scale;
+                range.filtering.put(dim, number.substring(0, number.length() - endCut) + request.singleLevelWildCard);
             }
         }
     }

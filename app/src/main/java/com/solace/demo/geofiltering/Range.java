@@ -14,7 +14,8 @@ public class Range implements Comparable<Range>, Cloneable {
     private static final int NEGATIVE = -1;
     private static final BigDecimal TEN = new BigDecimal(10);
     private static final GeometryFactory geomFact = new GeometryFactory();
-    private static final BigDecimal smallestUnit = new BigDecimal("0.00001");
+
+    static final BigDecimal smallestUnit = new BigDecimal("0.00001");
 
     enum DIMS {
         X, Y
