@@ -21,7 +21,7 @@ class RangesFinderTest {
             var request = FilteringRequest.from(jsonString);
             var result = RangesFinder.find(request);
             System.out.println(result.toPrettyJsonString());
-            assertEquals(expected, result.toJsonString());
+            assertEquals(expected, result.toPrettyJsonString());
         }catch (Exception e) {
             e.printStackTrace();
         }

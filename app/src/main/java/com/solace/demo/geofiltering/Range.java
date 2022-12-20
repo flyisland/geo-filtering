@@ -1,5 +1,6 @@
 package com.solace.demo.geofiltering;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,17 +22,17 @@ public class Range implements Comparable<Range>, Cloneable {
         return sign;
     }
 
-    public HashMap<DIMS, Double> getCoord() {
+    public HashMap<DIMS, BigDecimal> getCoord() {
         return coord;
     }
 
-    public HashMap<DIMS, Double> getUnit() {
+    public HashMap<DIMS, BigDecimal> getUnit() {
         return unit;
     }
 
     HashMap<DIMS, Integer> sign;
-    HashMap<DIMS, Double> coord;
-    HashMap<DIMS, Double> unit;
+    HashMap<DIMS, BigDecimal> coord;
+    HashMap<DIMS, BigDecimal> unit;
     double blankArea;
     double blankRatio;
     List<Geometry> polygonsToCover;
@@ -44,10 +45,10 @@ public class Range implements Comparable<Range>, Cloneable {
         unit = new HashMap<>();
         sign.put(DIMS.X, xSign);
         sign.put(DIMS.Y, ySign);
-        coord.put(DIMS.X, xCoord);
-        coord.put(DIMS.Y, yCoord);
-        unit.put(DIMS.X, bothUnit);
-        unit.put(DIMS.Y, bothUnit);
+        coord.put(DIMS.X, new BigDecimal(xCoord));
+        coord.put(DIMS.Y, new BigDecimal(yCoord));
+        unit.put(DIMS.X, new BigDecimal(bothUnit));
+        unit.put(DIMS.Y, new BigDecimal(bothUnit));
         this.polygonsToCover = polygonsToCover;
     }
 
@@ -95,14 +96,14 @@ public class Range implements Comparable<Range>, Cloneable {
         }
         children = new ArrayList<>();
         var env = getIntersectionsEnvelope();
-        var xRatio = (env.getMaxX() - env.getMinX()) / unit.get(DIMS.X);
-        var yRatio = (env.getMaxY() - env.getMinY()) / unit.get(DIMS.Y);
+        var xRatio = (env.getMaxX() - env.getMinX()) / unit.get(DIMS.X).doubleValue();
+        var yRatio = (env.getMaxY() - env.getMinY()) / unit.get(DIMS.Y).doubleValue();
         DIMS dim = xRatio < yRatio ? DIMS.X : DIMS.Y;
         for (var i = 0; i < 10; i++) {
             try {
                 var child = (Range) this.clone();
-                child.unit.put(dim, unit.get(dim) / 10);
-                child.coord.put(dim, this.coord.get(dim) + child.unit.get(dim) * i);
+                child.unit.put(dim, unit.get(dim).divide(new BigDecimal(10)));
+                child.coord.put(dim, this.coord.get(dim).add(child.unit.get(dim).multiply(new BigDecimal(i))));
                 child.polygonsToCover = this.intersectingPolygons;
                 child.intersectingPolygons = null;
                 child.children = null;
@@ -117,7 +118,7 @@ public class Range implements Comparable<Range>, Cloneable {
     }
 
     Double getRectangleArea() {
-        return unit.get(DIMS.X) * unit.get(DIMS.Y);
+        return unit.get(DIMS.X).multiply(unit.get(DIMS.Y)).doubleValue();
     }
 
     private Envelope getIntersectionsEnvelope() {
@@ -137,10 +138,12 @@ public class Range implements Comparable<Range>, Cloneable {
 
     private Geometry builtRangeRectangle() {
         Coordinate[] pts = new Coordinate[5];
-        final double x1 = sign.get(DIMS.X) * coord.get(DIMS.X);
-        final double y1 = sign.get(DIMS.Y) * coord.get(DIMS.Y);
-        final double x2 = sign.get(DIMS.X) * (coord.get(DIMS.X) + unit.get(DIMS.X));
-        final double y2 = sign.get(DIMS.Y) * (coord.get(DIMS.Y) + unit.get(DIMS.Y));
+        final double x1 = coord.get(DIMS.X).multiply(new BigDecimal(sign.get(DIMS.X))).doubleValue();
+        final double y1 = coord.get(DIMS.Y).multiply(new BigDecimal(sign.get(DIMS.Y))).doubleValue();
+        final double x2 =
+                coord.get(DIMS.X).add(unit.get(DIMS.X)).multiply(new BigDecimal(sign.get(DIMS.X))).doubleValue();
+        final double y2 =
+                coord.get(DIMS.Y).add(unit.get(DIMS.Y)).multiply(new BigDecimal(sign.get(DIMS.Y))).doubleValue();
         pts[0] = new Coordinate(x1, y1);
         pts[1] = new Coordinate(x1, y2);
         pts[2] = new Coordinate(x2, y2);
