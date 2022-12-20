@@ -14,6 +14,7 @@ public class Range implements Comparable<Range>, Cloneable {
     private static final int NEGATIVE = -1;
     private static final BigDecimal TEN = new BigDecimal(10);
     private static final GeometryFactory geomFact = new GeometryFactory();
+    private static final BigDecimal smallestUnit = new BigDecimal("0.00001");
 
     enum DIMS {
         X, Y
@@ -95,16 +96,19 @@ public class Range implements Comparable<Range>, Cloneable {
         blankRatio = blankArea / rectangleArea;
     }
 
-    void split() {
+    boolean split() {
         if (children != null) {
             // no need to split again
-            return;
+            return children.size()>0;
         }
         children = new ArrayList<>();
         var env = getIntersectionsEnvelope();
         var xRatio = (env.getMaxX() - env.getMinX()) / unit.get(DIMS.X).doubleValue();
         var yRatio = (env.getMaxY() - env.getMinY()) / unit.get(DIMS.Y).doubleValue();
         DIMS dim = xRatio < yRatio ? DIMS.X : DIMS.Y;
+        if (unit.get(dim).compareTo(smallestUnit)==0){
+            return false;
+        }
         for (var i = 0; i < 10; i++) {
             try {
                 var child = (Range) this.clone();
@@ -121,6 +125,7 @@ public class Range implements Comparable<Range>, Cloneable {
                 e.printStackTrace();
             }
         }
+        return true;
     }
 
     Double getRectangleArea() {
