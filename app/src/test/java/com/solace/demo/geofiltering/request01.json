@@ -1,6 +1,7 @@
 {
   "maxRangeCount": 1023,
   "minAccuracy": 67,
+  "singleLevelWildCard": "*",
   "shapes": [
     {
       "type": "Ellipse",

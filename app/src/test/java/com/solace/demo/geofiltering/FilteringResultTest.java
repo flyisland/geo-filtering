@@ -13,7 +13,7 @@ class FilteringResultTest {
         Path file = workingDir.resolve("filtering01.json");
         String jsonString = Files.readString(file);
         var request = FilteringRequest.from(jsonString);
-        var result = new FilteringResult(100, Range.genesis(request.polygons));
+        var result = new FilteringResult(request,100, Range.genesis(request.polygons));
         System.out.println(result.toJsonString());
         assertEquals(1, result.ranges.size());
     }

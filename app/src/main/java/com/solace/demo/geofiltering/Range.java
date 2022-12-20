@@ -10,15 +10,16 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
 public class Range implements Comparable<Range>, Cloneable {
-    static final int POSITIVE = 1;
-    static final int NEGATIVE = -1;
-    static GeometryFactory geomFact = new GeometryFactory();
+    private static final int POSITIVE = 1;
+    private static final int NEGATIVE = -1;
+    private static final BigDecimal TEN = new BigDecimal(10);
+    private static final GeometryFactory geomFact = new GeometryFactory();
 
     enum DIMS {
         X, Y
     }
 
-    public HashMap<DIMS, Integer> getSign() {
+    public HashMap<DIMS, BigDecimal> getSign() {
         return sign;
     }
 
@@ -30,9 +31,14 @@ public class Range implements Comparable<Range>, Cloneable {
         return unit;
     }
 
-    HashMap<DIMS, Integer> sign;
+    public HashMap<DIMS, String> getFiltering() {
+        return filtering;
+    }
+
+    HashMap<DIMS, BigDecimal> sign;
     HashMap<DIMS, BigDecimal> coord;
     HashMap<DIMS, BigDecimal> unit;
+    HashMap<DIMS, String> filtering;
     double blankArea;
     double blankRatio;
     List<Geometry> polygonsToCover;
@@ -43,8 +49,8 @@ public class Range implements Comparable<Range>, Cloneable {
         sign = new HashMap<>();
         coord = new HashMap<>();
         unit = new HashMap<>();
-        sign.put(DIMS.X, xSign);
-        sign.put(DIMS.Y, ySign);
+        sign.put(DIMS.X, new BigDecimal(xSign));
+        sign.put(DIMS.Y, new BigDecimal(ySign));
         coord.put(DIMS.X, new BigDecimal(xCoord));
         coord.put(DIMS.Y, new BigDecimal(yCoord));
         unit.put(DIMS.X, new BigDecimal(bothUnit));
@@ -102,7 +108,7 @@ public class Range implements Comparable<Range>, Cloneable {
         for (var i = 0; i < 10; i++) {
             try {
                 var child = (Range) this.clone();
-                child.unit.put(dim, unit.get(dim).divide(new BigDecimal(10)));
+                child.unit.put(dim, unit.get(dim).divide(TEN));
                 child.coord.put(dim, this.coord.get(dim).add(child.unit.get(dim).multiply(new BigDecimal(i))));
                 child.polygonsToCover = this.intersectingPolygons;
                 child.intersectingPolygons = null;
@@ -138,12 +144,10 @@ public class Range implements Comparable<Range>, Cloneable {
 
     private Geometry builtRangeRectangle() {
         Coordinate[] pts = new Coordinate[5];
-        final double x1 = coord.get(DIMS.X).multiply(new BigDecimal(sign.get(DIMS.X))).doubleValue();
-        final double y1 = coord.get(DIMS.Y).multiply(new BigDecimal(sign.get(DIMS.Y))).doubleValue();
-        final double x2 =
-                coord.get(DIMS.X).add(unit.get(DIMS.X)).multiply(new BigDecimal(sign.get(DIMS.X))).doubleValue();
-        final double y2 =
-                coord.get(DIMS.Y).add(unit.get(DIMS.Y)).multiply(new BigDecimal(sign.get(DIMS.Y))).doubleValue();
+        final double x1 = sign.get(DIMS.X).multiply(coord.get(DIMS.X)).doubleValue();
+        final double y1 = sign.get(DIMS.Y).multiply(coord.get(DIMS.Y)).doubleValue();
+        final double x2 = sign.get(DIMS.X).multiply(coord.get(DIMS.X).add(unit.get(DIMS.X))).doubleValue();
+        final double y2 = sign.get(DIMS.Y).multiply(coord.get(DIMS.Y).add(unit.get(DIMS.Y))).doubleValue();
         pts[0] = new Coordinate(x1, y1);
         pts[1] = new Coordinate(x1, y2);
         pts[2] = new Coordinate(x2, y2);

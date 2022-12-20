@@ -1,6 +1,7 @@
 {
   "maxRangeCount": 100,
   "minAccuracy": 90,
+  "singleLevelWildCard": "*",
   "shapes": [
     {
       "type": "Rectangle",

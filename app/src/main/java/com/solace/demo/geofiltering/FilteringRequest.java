@@ -16,6 +16,7 @@ public class FilteringRequest {
 
     int maxRangeCount;
     double minAccuracy;
+    String singleLevelWildCard;
     List<Geometry> polygons = new ArrayList<>();
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -43,6 +44,7 @@ public class FilteringRequest {
         var request = new FilteringRequest();
         request.maxRangeCount = root.get("maxRangeCount").asInt();
         request.minAccuracy = root.get("minAccuracy").asDouble()/100;
+        request.singleLevelWildCard = root.get("singleLevelWildCard").asText();
         var shapes = root.get("shapes");
         shapes.elements().forEachRemaining((shape) -> {
             var gsf = new GeometricShapeFactory();
