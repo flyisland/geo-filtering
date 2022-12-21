@@ -1,21 +1,15 @@
 package com.solace.demo.geofiltering;
 
+import static com.solace.demo.geofiltering.Constants.DIMS;
+import static com.solace.demo.geofiltering.Constants.df;
+import static com.solace.demo.geofiltering.Constants.smallestUnit;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.text.DecimalFormat;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 public class FilteringResult {
     private static final ObjectMapper objectMapper = new ObjectMapper();
-    private static final HashMap<Range.DIMS, DecimalFormat> df = new HashMap<>();
-
-    static {
-        // 5 decimal places
-        df.put(Range.DIMS.X, new DecimalFormat("000.00000")); // -180~180
-        df.put(Range.DIMS.Y, new DecimalFormat("00.00000")); // -90~90
-    }
 
     FilteringRequest request;
     double accuracy;
@@ -37,10 +31,10 @@ public class FilteringResult {
     }
 
     private void builtFiltering() {
-        var scale = Range.smallestUnit.scale();
+        var scale = smallestUnit.scale();
         for (var range : ranges) {
             range.filtering = new LinkedHashMap<>();
-            for (var dim : Range.DIMS.values()) {
+            for (var dim : DIMS.values()) {
                 var number = df.get(dim).format(range.sign.get(dim).multiply(range.coord.get(dim)));
                 var endCut = (int) Math.round(Math.log10(range.unit.get(dim).doubleValue()));
                 endCut = endCut > 0 ? endCut + scale + 1 : endCut + scale;

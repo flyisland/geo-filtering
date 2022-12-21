@@ -1,5 +1,10 @@
 package com.solace.demo.geofiltering;
 
+import static com.solace.demo.geofiltering.Constants.DIMS;
+import static com.solace.demo.geofiltering.Constants.NEGATIVE;
+import static com.solace.demo.geofiltering.Constants.POSITIVE;
+import static com.solace.demo.geofiltering.Constants.TEN;
+import static com.solace.demo.geofiltering.Constants.smallestUnit;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -11,16 +16,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 
 public class Range implements Comparable<Range>, Cloneable {
-    private static final int POSITIVE = 1;
-    private static final int NEGATIVE = -1;
-    private static final BigDecimal TEN = new BigDecimal(10);
     private static final GeometryFactory geomFact = new GeometryFactory();
-
-    static final BigDecimal smallestUnit = new BigDecimal("0.00001");
-
-    enum DIMS {
-        X, Y
-    }
 
     public Map<DIMS, BigDecimal> getSign() {
         return sign;
