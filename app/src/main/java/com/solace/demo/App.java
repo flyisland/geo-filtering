@@ -117,8 +117,19 @@ public class App implements Callable<Integer>
                 TextMessage replyMsg = JCSMPFactory.onlyInstance().createMessage(TextMessage.class);
                 replyMsg.setText(result.toJsonString());
                 var clientName = JCSMPFactory.onlyInstance().createClientName(request.getClientName());
-                var topicPattern = result.getTopicPattern();
                 try {
+                    if (request.getPrevResult() != null){
+                        // remove previous subscriptions first
+                        var topicPattern = request.getPrevResult().getTopicPattern();
+                        for (var range : request.getPrevResult().getRanges()) {
+                            var temp = topicPattern.replace("{lat}", range.getFiltering().get(Constants.DIMS.Y));
+                            var topic = temp.replace("{lng}", range.getFiltering().get(Constants.DIMS.X));
+                            session.removeSubscription(clientName, JCSMPFactory.onlyInstance().createTopic(topic),
+                                    JCSMPSession.WAIT_FOR_CONFIRM);
+                        }
+                    }
+
+                    var topicPattern = result.getTopicPattern();
                     for (var range : result.getRanges()) {
                         var temp = topicPattern.replace("{lat}", range.getFiltering().get(Constants.DIMS.Y));
                         var topic = temp.replace("{lng}", range.getFiltering().get(Constants.DIMS.X));

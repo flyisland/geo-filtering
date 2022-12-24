@@ -18,6 +18,9 @@ import org.locationtech.jts.geom.GeometryFactory;
 public class Range implements Comparable<Range>, Cloneable {
     private static final GeometryFactory geomFact = new GeometryFactory();
 
+    public Range() {
+    }
+
     public Map<DIMS, BigDecimal> getSign() {
         return sign;
     }
@@ -32,6 +35,22 @@ public class Range implements Comparable<Range>, Cloneable {
 
     public Map<DIMS, String> getFiltering() {
         return filtering;
+    }
+
+    public void setSign(Map<DIMS, BigDecimal> sign) {
+        this.sign = sign;
+    }
+
+    public void setCoord(Map<DIMS, BigDecimal> coord) {
+        this.coord = coord;
+    }
+
+    public void setUnit(Map<DIMS, BigDecimal> unit) {
+        this.unit = unit;
+    }
+
+    public void setFiltering(Map<DIMS, String> filtering) {
+        this.filtering = filtering;
     }
 
     Map<DIMS, BigDecimal> sign;

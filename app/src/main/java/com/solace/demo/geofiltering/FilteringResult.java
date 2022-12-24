@@ -16,6 +16,18 @@ public class FilteringResult {
     String topicPattern;
     List<Range> ranges;
 
+    public FilteringResult() {
+        super();
+    }
+
+    public void setTopicPattern(String topicPattern) {
+        this.topicPattern = topicPattern;
+    }
+
+    public void setRanges(List<Range> ranges) {
+        this.ranges = ranges;
+    }
+
     public double getAccuracy() {
         return accuracy;
     }

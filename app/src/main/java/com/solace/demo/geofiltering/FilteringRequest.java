@@ -1,5 +1,6 @@
 package com.solace.demo.geofiltering;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
@@ -20,9 +21,13 @@ public class FilteringRequest {
     String topicPattern;
     String clientName;
     List<Geometry> polygons = new ArrayList<>();
+    FilteringResult prevResult;
 
     public String getClientName() {
         return clientName;
+    }
+    public FilteringResult getPrevResult() {
+        return prevResult;
     }
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -53,6 +58,12 @@ public class FilteringRequest {
         request.singleLevelWildCard = root.get("singleLevelWildCard").asText();
         request.topicPattern = root.get("topicPattern").asText();
         request.clientName=root.get("clientName").asText();
+        try {
+            request.prevResult = objectMapper.treeToValue(root.get("prevResult"), FilteringResult.class);
+        } catch (JsonProcessingException e) {
+            logger.error(e.toString());
+        }
+
         var shapes = root.get("shapes");
         shapes.elements().forEachRemaining((shape) -> {
             var gsf = new GeometricShapeFactory();
