@@ -3,9 +3,11 @@
  */
 package com.solace.demo;
 
+import com.solace.demo.geofiltering.Constants;
 import com.solace.demo.geofiltering.FilteringRequest;
 import com.solace.demo.geofiltering.RangesFinder;
 import com.solacesystems.jcsmp.BytesXMLMessage;
+import com.solacesystems.jcsmp.CapabilityType;
 import com.solacesystems.jcsmp.JCSMPException;
 import com.solacesystems.jcsmp.JCSMPFactory;
 import com.solacesystems.jcsmp.JCSMPProperties;
@@ -54,7 +56,10 @@ public class App implements Callable<Integer>
 
     @Override
     public Integer call() throws Exception {
-        connectToBroker();
+        Integer r = connectToBroker();
+        if (r != 0) {
+            return r;
+        }
         CtrlCHelper.waitForCtrlC("Press Ctrl+C to exit");
         // Close consumer
         // consumer.close();
@@ -64,7 +69,7 @@ public class App implements Callable<Integer>
         return null;
     }
 
-    private void connectToBroker() throws Exception {
+    private Integer connectToBroker() throws Exception {
         final var names = userName.split("@");
         var vpnName = names.length > 1 ? names[1] : "default";
 
@@ -78,6 +83,11 @@ public class App implements Callable<Integer>
 
         logger.info("Start to connect to host {}, with user {}", host, userName);
         session.connect();
+        if (!session.isCapable(CapabilityType.SUBSCRIPTION_MANAGER)) {
+            logger.error("Requires an broker supporting subscription management.");
+            return 1;
+        }
+
         // Simple anonymous inner-class for handling publishing events
         producer = session.getMessageProducer(new JCSMPStreamingPublishCorrelatingEventHandler() {
             // unused in Direct Messaging application, only for Guaranteed/Persistent publishing application
@@ -96,6 +106,7 @@ public class App implements Callable<Integer>
         session.addSubscription(topic);
         consumer.start();
         logger.info("Connected. Awaiting message...");
+        return 0;
     }
 
     void onMessageReceived(BytesXMLMessage requestMsg) {
@@ -105,10 +116,18 @@ public class App implements Callable<Integer>
                 var result = RangesFinder.find(request);
                 TextMessage replyMsg = JCSMPFactory.onlyInstance().createMessage(TextMessage.class);
                 replyMsg.setText(result.toJsonString());
+                var clientName = JCSMPFactory.onlyInstance().createClientName(request.getClientName());
+                var topicPattern = result.getTopicPattern();
                 try {
+                    for (var range : result.getRanges()) {
+                        var temp = topicPattern.replace("{lat}", range.getFiltering().get(Constants.DIMS.Y));
+                        var topic = temp.replace("{lng}", range.getFiltering().get(Constants.DIMS.X));
+                        session.addSubscription(clientName, JCSMPFactory.onlyInstance().createTopic(topic),
+                                JCSMPSession.WAIT_FOR_CONFIRM);
+                    }
                     producer.sendReply(requestMsg, replyMsg);
                 } catch (JCSMPException e) {
-                    logger.error("Error sending reply.");
+                    logger.error("Error: {}}", e.toString());
                 }
             } catch (Exception e) {
                 e.printStackTrace();

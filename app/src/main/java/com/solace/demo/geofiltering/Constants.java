@@ -12,7 +12,7 @@ public class Constants {
     static final BigDecimal smallestUnit = new BigDecimal("0.00001");
     static final HashMap<DIMS, DecimalFormat> df = new HashMap<>();
 
-    enum DIMS {
+    public enum DIMS {
         X, Y
     }
 

@@ -13,10 +13,15 @@ public class FilteringResult {
 
     FilteringRequest request;
     double accuracy;
+    String topicPattern;
     List<Range> ranges;
 
     public double getAccuracy() {
         return accuracy;
+    }
+
+    public String getTopicPattern() {
+        return topicPattern;
     }
 
     public List<Range> getRanges() {
@@ -25,6 +30,7 @@ public class FilteringResult {
 
     public FilteringResult(FilteringRequest request, double accuracy, List<Range> ranges) {
         this.request = request;
+        this.topicPattern = request.topicPattern;
         this.accuracy = accuracy;
         this.ranges = ranges;
         builtFiltering();

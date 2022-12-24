@@ -17,7 +17,13 @@ public class FilteringRequest {
     int maxRangeCount;
     double minAccuracy;
     String singleLevelWildCard;
+    String topicPattern;
+    String clientName;
     List<Geometry> polygons = new ArrayList<>();
+
+    public String getClientName() {
+        return clientName;
+    }
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
     public static FilteringRequest from(String jsonString) throws Exception {
@@ -45,6 +51,8 @@ public class FilteringRequest {
         request.maxRangeCount = root.get("maxRangeCount").asInt();
         request.minAccuracy = root.get("minAccuracy").asDouble()/100;
         request.singleLevelWildCard = root.get("singleLevelWildCard").asText();
+        request.topicPattern = root.get("topicPattern").asText();
+        request.clientName=root.get("clientName").asText();
         var shapes = root.get("shapes");
         shapes.elements().forEachRemaining((shape) -> {
             var gsf = new GeometricShapeFactory();
