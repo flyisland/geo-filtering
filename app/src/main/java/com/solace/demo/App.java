@@ -75,13 +75,13 @@ public class App implements Callable<Integer>
 
         final JCSMPProperties properties = new JCSMPProperties();
         properties.setProperty(JCSMPProperties.HOST, host);
-        properties.setProperty(JCSMPProperties.USERNAME, userName);
+        properties.setProperty(JCSMPProperties.USERNAME, names[0]);
         properties.setProperty(JCSMPProperties.VPN_NAME, vpnName);
         properties.setProperty(JCSMPProperties.PASSWORD, password);
         properties.setProperty(JCSMPProperties.CLIENT_NAME, "geo-filtering");
         session = JCSMPFactory.onlyInstance().createSession(properties);
 
-        logger.info("Start to connect to host {}, with user {}", host, userName);
+        logger.info("Start to connect to host {}, with user {}@{}", host, names[0], vpnName);
         session.connect();
         if (!session.isCapable(CapabilityType.SUBSCRIPTION_MANAGER)) {
             logger.error("Requires an broker supporting subscription management.");
