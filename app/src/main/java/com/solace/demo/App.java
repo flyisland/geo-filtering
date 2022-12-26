@@ -113,13 +113,19 @@ public class App implements Callable<Integer>
         if (requestMsg.hasAttachment()) {
             try {
                 var request = FilteringRequest.from(requestMsg.getAttachmentByteBuffer().array());
+                logger.info("=== Received a filtering request");
                 var result = RangesFinder.find(request);
+
                 TextMessage replyMsg = JCSMPFactory.onlyInstance().createMessage(TextMessage.class);
                 replyMsg.setText(result.toJsonString());
+                logger.info("Send back the reply message ({} bytes)", replyMsg.getText().length());
+                producer.sendReply(requestMsg, replyMsg);
+
                 var clientName = JCSMPFactory.onlyInstance().createClientName(request.getClientName());
                 try {
                     if (request.getPrevResult() != null){
                         // remove previous subscriptions first
+                        logger.info("To remove previous {} subscriptions first", request.getPrevResult().getRanges().size());
                         var topicPattern = request.getPrevResult().getTopicPattern();
                         for (var range : request.getPrevResult().getRanges()) {
                             var temp = topicPattern.replace("{lat}", range.getFiltering().get(Constants.DIMS.Y));
@@ -130,13 +136,13 @@ public class App implements Callable<Integer>
                     }
 
                     var topicPattern = result.getTopicPattern();
+                    logger.info("To subscribe on {} ranges", result.getRanges().size());
                     for (var range : result.getRanges()) {
                         var temp = topicPattern.replace("{lat}", range.getFiltering().get(Constants.DIMS.Y));
                         var topic = temp.replace("{lng}", range.getFiltering().get(Constants.DIMS.X));
                         session.addSubscription(clientName, JCSMPFactory.onlyInstance().createTopic(topic),
                                 JCSMPSession.WAIT_FOR_CONFIRM);
                     }
-                    producer.sendReply(requestMsg, replyMsg);
                 } catch (JCSMPException e) {
                     logger.error("Error: {}}", e.toString());
                 }
