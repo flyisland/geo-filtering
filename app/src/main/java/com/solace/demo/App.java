@@ -23,25 +23,25 @@ import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
-
-
-public class App implements Callable<Integer>
-{
+public class App implements Callable<Integer> {
     final Logger logger = LoggerFactory.getLogger(App.class);
 
-    @Option(names = {"-h",
-            "--host"}, description = "ip[:port]  IP and port of the event broker. (e.g. -h=192.168.160.101)")
-    private String host = "localhost:44444";
+    @Option(names = {"-h", "--host"}, defaultValue = "${env:solace_host:-localhost:44444}",
+            description = "ip[:port]  IP and port of the event broker. (e.g. -h=192.168.160.101)")
+    private String host;
 
-    @Option(names = {"-u", "--username"}, description = "user[@vpn]  Client username and optionally VPN name.")
-    private String userName = "default@default";
+    @Option(names = {"-u", "--username"}, defaultValue = "${env:solace_username:-default@default}",
+            description = "user[@vpn] Client username and optionally VPN name.")
+    private String userName;
 
-    @Option(names = {"-p", "--password"}, description = "Client password")
-    private String password = "default";
+    @Option(names = {"-p", "--password"}, defaultValue = "${env:solace_password:-default}",
+            description = "Client password")
+    private String password;
 
     private JCSMPSession session;
     private XMLMessageConsumer consumer;
     private XMLMessageProducer producer;
+
     // switch off the jcsmp output
     // (https://stackoverflow.com/questions/35313868/solace-how-to-switch-off-the-info-statements-sent-to-std-err-from-solace-java-a)
     static {
@@ -90,7 +90,8 @@ public class App implements Callable<Integer>
 
         // Simple anonymous inner-class for handling publishing events
         producer = session.getMessageProducer(new JCSMPStreamingPublishCorrelatingEventHandler() {
-            // unused in Direct Messaging application, only for Guaranteed/Persistent publishing application
+            // unused in Direct Messaging application, only for Guaranteed/Persistent
+            // publishing application
             @Override
             public void responseReceivedEx(Object key) {
             }
@@ -123,9 +124,10 @@ public class App implements Callable<Integer>
 
                 var clientName = JCSMPFactory.onlyInstance().createClientName(request.getClientName());
                 try {
-                    if (request.getPrevResult() != null){
+                    if (request.getPrevResult() != null) {
                         // remove previous subscriptions first
-                        logger.info("To remove previous {} subscriptions first", request.getPrevResult().getRanges().size());
+                        logger.info("To remove previous {} subscriptions first",
+                                request.getPrevResult().getRanges().size());
                         var topicPattern = request.getPrevResult().getTopicPattern();
                         for (var range : request.getPrevResult().getRanges()) {
                             var temp = topicPattern.replace("{lat}", range.getFiltering().get(Constants.DIMS.Y));
