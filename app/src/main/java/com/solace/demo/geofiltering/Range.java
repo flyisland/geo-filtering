@@ -4,7 +4,7 @@ import static com.solace.demo.geofiltering.Constants.DIMS;
 import static com.solace.demo.geofiltering.Constants.NEGATIVE;
 import static com.solace.demo.geofiltering.Constants.POSITIVE;
 import static com.solace.demo.geofiltering.Constants.TEN;
-import static com.solace.demo.geofiltering.Constants.smallestUnit;
+import static com.solace.demo.geofiltering.Constants.minimumUnit;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -93,6 +93,7 @@ public class Range implements Comparable<Range>, Cloneable {
         return result;
     }
 
+    // to check if this Range rectangle intersects with any polygons given
     void calculate() {
         if (this.intersectingPolygons != null) {
             // no need to calculate again
@@ -123,7 +124,7 @@ public class Range implements Comparable<Range>, Cloneable {
         var xRatio = (env.getMaxX() - env.getMinX()) / unit.get(DIMS.X).doubleValue();
         var yRatio = (env.getMaxY() - env.getMinY()) / unit.get(DIMS.Y).doubleValue();
         DIMS dim = xRatio < yRatio ? DIMS.X : DIMS.Y;
-        if (unit.get(dim).compareTo(smallestUnit)==0){
+        if (unit.get(dim).compareTo(minimumUnit)==0){
             return false;
         }
         for (var i = 0; i < 10; i++) {

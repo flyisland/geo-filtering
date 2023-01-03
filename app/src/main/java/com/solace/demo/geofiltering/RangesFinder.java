@@ -30,7 +30,7 @@ public class RangesFinder {
                 i++;
             }
             if (!splitSuccess) {
-                // because the maxRangeCount limit
+                // because the maxRangeCount or minimum unit limit
                 break;
             }
         } while (accuracy < request.minAccuracy);

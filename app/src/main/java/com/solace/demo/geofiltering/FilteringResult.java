@@ -2,7 +2,7 @@ package com.solace.demo.geofiltering;
 
 import static com.solace.demo.geofiltering.Constants.DIMS;
 import static com.solace.demo.geofiltering.Constants.df;
-import static com.solace.demo.geofiltering.Constants.smallestUnit;
+import static com.solace.demo.geofiltering.Constants.minimumUnit;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.LinkedHashMap;
@@ -49,7 +49,7 @@ public class FilteringResult {
     }
 
     private void builtFiltering() {
-        var scale = smallestUnit.scale();
+        var scale = minimumUnit.scale();
         for (var range : ranges) {
             range.filtering = new LinkedHashMap<>();
             for (var dim : DIMS.values()) {
