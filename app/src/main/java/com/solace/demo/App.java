@@ -23,19 +23,22 @@ import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
+@CommandLine.Command(showDefaultValues = true)
 public class App implements Callable<Integer> {
     final Logger logger = LoggerFactory.getLogger(App.class);
+    @Option(names = {"-h", "--help"}, usageHelp = true, description = "display this help message")
+    boolean usageHelpRequested;
 
-    @Option(names = {"-h", "--host"}, defaultValue = "${env:solace_host:-localhost:44444}",
-            description = "ip[:port]  IP and port of the event broker. (e.g. -h=192.168.160.101)")
+    @Option(names = {"-H", "--host"}, defaultValue = "${env:solace_host:-localhost:44444}",
+            description = "ip[:port]  IP and port of the event broker. (e.g. -h=192.168.160.101), if not specified, read from the env variable solace_host")
     private String host;
 
     @Option(names = {"-u", "--username"}, defaultValue = "${env:solace_username:-default@default}",
-            description = "user[@vpn] Client username and optionally VPN name.")
+            description = "user[@vpn] Client username and optionally VPN name, , if not specified, read from the env variable solace_username")
     private String userName;
 
     @Option(names = {"-p", "--password"}, defaultValue = "${env:solace_password:-default}",
-            description = "Client password")
+            description = "Client password, if not specified, read from the env variable solace_password")
     private String password;
 
     private JCSMPSession session;
