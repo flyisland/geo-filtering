@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
-@CommandLine.Command(showDefaultValues = true)
+@CommandLine.Command(name="geo-filtering", showDefaultValues = true)
 public class App implements Callable<Integer> {
     final Logger logger = LoggerFactory.getLogger(App.class);
     @Option(names = {"-h", "--help"}, usageHelp = true, description = "display this help message")

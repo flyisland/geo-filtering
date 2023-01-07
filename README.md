@@ -4,6 +4,35 @@ This is a simple implementation of Aaron's essay [Ranged Filtering of Streaming 
 
 It also works as a [OBO subscription managers](https://docs.solace.com/API/API-Developer-Guide/Managing-Subscriptions.htm#Manage-On-Behalf) to subscribe to a large number of topics for the Web client.
 
+## Prerequisites
+
+Enable subscription management capability of the client first. 
+
+![](./obo.avif)
+
+## Options
+
+1. run `./gradlew jar` first to build the flat jar file
+
+```shell
+ java -jar app/build/libs/geo-filtering.jar --help
+Usage: geo-filtering [-h] [-H=<host>] [-p=<password>] [-u=<userName>]
+  -h, --help          display this help message
+  -H, --host=<host>   ip[:port]  IP and port of the event broker. (e.g. -h=192.
+                        168.160.101), if not specified, read from the env
+                        variable solace_host
+                        Default: localhost:44444
+  -p, --password=<password>
+                      Client password, if not specified, read from the env
+                        variable solace_password
+                        Default: default
+  -u, --username=<userName>
+                      user[@vpn] Client username and optionally VPN name, , if
+                        not specified, read from the env variable
+                        solace_username
+                        Default: default@default
+```
+
 ## Build Docker Image
 
 1. run `./gradlew jar` first to build the flat jar file
