@@ -7,7 +7,6 @@ import com.solace.demo.geofiltering.Constants;
 import com.solace.demo.geofiltering.FilteringRequest;
 import com.solace.demo.geofiltering.RangesFinder;
 import com.solacesystems.jcsmp.BytesXMLMessage;
-import com.solacesystems.jcsmp.CapabilityType;
 import com.solacesystems.jcsmp.JCSMPException;
 import com.solacesystems.jcsmp.JCSMPFactory;
 import com.solacesystems.jcsmp.JCSMPProperties;
@@ -27,7 +26,7 @@ import picocli.CommandLine.Option;
 public class App implements Callable<Integer> {
     final Logger logger = LoggerFactory.getLogger(App.class);
     @Option(names = {"-h", "--help"}, usageHelp = true, description = "display this help message")
-    boolean usageHelpRequested;
+    private boolean usageHelpRequested;
 
     @Option(names = {"-H", "--host"}, defaultValue = "${env:solace_host:-localhost:44444}",
             description = "ip[:port]  IP and port of the event broker. (e.g. -h=192.168.160.101), if not specified, read from the env variable solace_host")
@@ -86,10 +85,6 @@ public class App implements Callable<Integer> {
 
         logger.info("Start to connect to host {}, with user {}@{}", host, names[0], vpnName);
         session.connect();
-        if (!session.isCapable(CapabilityType.SUBSCRIPTION_MANAGER)) {
-            logger.error("Requires an broker supporting subscription management.");
-            return 1;
-        }
 
         // Simple anonymous inner-class for handling publishing events
         producer = session.getMessageProducer(new JCSMPStreamingPublishCorrelatingEventHandler() {
