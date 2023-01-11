@@ -7,9 +7,12 @@ import static com.solace.demo.geofiltering.Constants.TEN;
 import static com.solace.demo.geofiltering.Constants.minimumUnit;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -115,17 +118,35 @@ public class Range implements Comparable<Range>, Cloneable {
     }
 
     boolean split() {
-        if (children != null) {
+        if (this.children != null) {
             // no need to split again
-            return children.size()>0;
+            return this.children.size() > 0;
         }
-        children = new ArrayList<>();
-        var env = getIntersectionsEnvelope();
-        var xRatio = (env.getMaxX() - env.getMinX()) / unit.get(DIMS.X).doubleValue();
-        var yRatio = (env.getMaxY() - env.getMinY()) / unit.get(DIMS.Y).doubleValue();
-        DIMS dim = xRatio < yRatio ? DIMS.X : DIMS.Y;
-        if (unit.get(dim).compareTo(minimumUnit)==0){
+
+        var childrenMap = Stream.of(DIMS.X, DIMS.Y).collect(
+                Collectors.toMap(dim->dim, this::splitByDim)
+        );
+
+        var childrenList = childrenMap.values().stream().filter(list -> list.size() > 0).collect(Collectors.toList());
+        if (childrenList.size() == 0) {
+            // units in both dimension hit the minimumUnit
             return false;
+        } else if (childrenList.size() == 1) {
+            // only one valid children
+            this.children = childrenList.get(0);
+        } else if (childrenList.get(0).size() != childrenList.get(1).size()) {
+            // select a smaller group of children
+            this.children = childrenList.stream().min(Comparator.comparing(List::size)).get();
+        }else {
+            this.children = this.unit.get((DIMS.X)).compareTo(this.unit.get((DIMS.Y)))>0 ? childrenMap.get(DIMS.X) : childrenMap.get(DIMS.Y);
+        }
+        return true;
+    }
+
+    private ArrayList<Range> splitByDim(DIMS dim) {
+        var result = new ArrayList<Range>();
+        if (unit.get(dim).compareTo(minimumUnit) == 0) {
+            return result;
         }
         for (var i = 0; i < 10; i++) {
             try {
@@ -137,13 +158,13 @@ public class Range implements Comparable<Range>, Cloneable {
                 child.children = null;
                 child.calculate();
                 if (child.blankRatio < 1) {
-                    children.add(child);
+                    result.add(child);
                 }
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }
         }
-        return true;
+        return result;
     }
 
     Double getRectangleArea() {
